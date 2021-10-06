@@ -1,6 +1,10 @@
+import os
+import xml.etree.ElementTree as ET
 from random import randrange
 from elements import statute
 Statute = statute.Statute
+
+
 
 def get_statute_string(num=756, year=2011):
     schema = "http://data.finlex.fi/schema/sfl/"
@@ -19,6 +23,68 @@ def get_statute_string(num=756, year=2011):
     else:
         return False
 
+def list_all_file_paths():
+    file_paths = []
+    files_to_ignore = [] 
+    for root, dirs, files in os.walk(".", topdown=False):
+        for name in files:
+            if name in files_to_ignore:
+                continue
+            else:
+                file_paths.append(os.path.join(root, name))
+    return file_paths
+
+def list_all_dir_paths():
+    dirPaths = []
+    dirs_to_ignore = []
+    for root, dirs, files in os.walk(".", topdown=False):
+        for name in dirs:
+            if name in dirs_to_ignore:
+                continue
+            else:
+                dirPaths.append(os.path.join(root, name))
+    return dirPaths
+
+def get_xml_folder_names():
+    cwd = os.getcwd()
+    dir_names = []
+    xml_folders_path = os.path.join(cwd,"xml")
+    for dirname, dirnames, filenames in os.walk(xml_folders_path):
+        for subdirname in dirnames:
+            dir_names.append(subdirname)
+    return dir_names
+
+def get_xml_folder_paths():
+    stat_years = get_xml_folder_names()
+    assert len(stat_years) > 0 
+    folder_paths = [] 
+    xml_folders_path = os.path.join(os.getcwd(), "xml")
+    stat_year_folder_paths = []
+
+    for folder_name in stat_years:
+        path = os.path.join(xml_folders_path, folder_name)
+        stat_year_folder_paths.append(path)
+    return stat_year_folder_paths
+
+def get_xml_file_paths():
+    file_paths = []
+    xml_folder_paths = get_xml_folder_paths()
+
+    for xml_folder_path in xml_folder_paths:
+        for dirname, dirnames, filenames in os.walk(xml_folder_path):
+            for filename in filenames:
+                if filename != None:
+                    file_path = os.path.join(xml_folder_path, filename)
+                    file_paths.append(file_path)
+
+    return file_paths
+
+def get_ElementTree(xml_path):
+    tree = ET.parse(xml_path)
+    return tree
+
+
+"""
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -56,7 +122,11 @@ if __name__ == "__main__":
             random_year = randrange(1889,2021,1)
             random_num = randrange(0,3000,1)
             stat_str = get_statute_string(num=random_num, year=random_year)
-        print(stat_str)
+    print(stat_str)
+"""
+file_paths = get_xml_file_paths()
+file_path = file_paths[100]
+tree = get_ElementTree(file_path)
+root = tree.getroot()
 
-    #print_statute(args.num, args.year)
-
+print(root)
