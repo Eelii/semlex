@@ -22,21 +22,25 @@ class Statute:
     version = None 
     versionDate = None
 
-    def __init__(self, num, year):
-        self.url = createUrl(num, year)
-        self.json_str = getJsonStr(self.url)
-        if self.json_str != False:
-            self.get_body()
+    def __init__(self, num, year, xml=False):
 
-        if self.has_parts:
-            self.create_parts()
-
-        if self.has_chapters:
-            self.create_chapters()
-            for chapter in self.chapters:
-                chapter.create_sections()
+        if xml == True:
+            pass
         else:
-            self.create_sections()
+            self.url = createUrl(num, year)
+            self.json_str = getJsonStr(self.url)
+            if self.json_str != False:
+                self.get_body()
+
+            if self.has_parts:
+                self.create_parts()
+
+            if self.has_chapters:
+                self.create_chapters()
+                for chapter in self.chapters:
+                    chapter.create_sections()
+            else:
+                self.create_sections()
 
         """self.statuteID = getStatuteID(self.json_str)
         self.numOfSections = getStatuteNumOfSections(self.json)

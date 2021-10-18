@@ -76,7 +76,6 @@ def get_xml_file_paths():
                 if filename != None:
                     file_path = os.path.join(xml_folder_path, filename)
                     file_paths.append(file_path)
-
     return file_paths
 
 def get_ElementTree(xml_path):
